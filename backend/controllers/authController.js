@@ -2,14 +2,11 @@ const prisma = require('../utils/database');
 const { hashPassword, comparePassword, generateToken } = require('../utils/authUtils');
 const { successResponse, errorResponse } = require('../utils/responseHelper');
 
-// @desc    Register user
-// @route   POST /api/auth/register
-// @access  Public
+
 const register = async (req, res) => {
   try {
     const { name, email, password, role = 'USER' } = req.body;
 
-    // Validation
     if (!name || !email || !password) {
       return errorResponse(res, 'Please provide name, email and password', 400);
     }
@@ -18,7 +15,6 @@ const register = async (req, res) => {
       return errorResponse(res, 'Password must be at least 6 characters', 400);
     }
 
-    // Check if user exists
     const existingUser = await prisma.user.findUnique({
       where: { email }
     });
@@ -27,7 +23,6 @@ const register = async (req, res) => {
       return errorResponse(res, 'User already exists with this email', 400);
     }
 
-    // Create user
     const hashedPassword = await hashPassword(password);
     
     const user = await prisma.user.create({
@@ -35,7 +30,7 @@ const register = async (req, res) => {
         name,
         email: email.toLowerCase(),
         password: hashedPassword,
-        role: role // ADMIN, MANAGER, or USER
+        role: role
       },
       select: {
         id: true,
@@ -46,7 +41,6 @@ const register = async (req, res) => {
       }
     });
 
-    // Generate token
     const token = generateToken(user.id, user.role);
 
     successResponse(res, 'User registered successfully', {
@@ -60,19 +54,15 @@ const register = async (req, res) => {
   }
 };
 
-// @desc    Login user
-// @route   POST /api/auth/login
-// @access  Public
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validation
     if (!email || !password) {
       return errorResponse(res, 'Please provide email and password', 400);
     }
 
-    // Check if user exists and is active
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() }
     });
@@ -81,17 +71,14 @@ const login = async (req, res) => {
       return errorResponse(res, 'Invalid credentials or user inactive', 401);
     }
 
-    // Check password
     const isPasswordValid = await comparePassword(password, user.password);
     
     if (!isPasswordValid) {
       return errorResponse(res, 'Invalid credentials', 401);
     }
 
-    // Generate token
     const token = generateToken(user.id, user.role);
 
-    // Return user data (without password)
     const userResponse = {
       id: user.id,
       name: user.name,
@@ -111,9 +98,7 @@ const login = async (req, res) => {
   }
 };
 
-// @desc    Get current user
-// @route   GET /api/auth/me
-// @access  Private
+
 const getMe = async (req, res) => {
   try {
     // User is already attached to req by protect middleware
@@ -133,9 +118,6 @@ const getMe = async (req, res) => {
   }
 };
 
-// @desc    Update user profile
-// @route   PUT /api/auth/profile
-// @access  Private
 const updateProfile = async (req, res) => {
   try {
     const { name, email } = req.body;
@@ -179,9 +161,6 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// @desc    Change password
-// @route   PUT /api/auth/change-password
-// @access  Private
 const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;

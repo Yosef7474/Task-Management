@@ -5,6 +5,8 @@ const port = 3000;
 const cors = require('cors');
 const prisma = require('./prismaClient.js');
 const authRoutes = require('./routes/auth.js')
+const taskRoutes = require('./routes/task.js');
+const userRoutes = require('./routes/user.js');
 
 app.use(cors());
 app.use(express.json());
@@ -51,6 +53,8 @@ app.get("/api/test-tables", async (req, res) => {
 });
 
 app.use('/api/auth', authRoutes)
+app.use('/api/tasks', taskRoutes);
+app.use('/api/users', userRoutes)
 
 
 
