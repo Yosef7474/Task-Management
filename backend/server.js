@@ -7,9 +7,11 @@ const prisma = require('./prismaClient.js');
 const authRoutes = require('./routes/auth.js')
 const taskRoutes = require('./routes/task.js');
 const userRoutes = require('./routes/user.js');
-const attachmentRoutes = require('./src/routes/attachments');
-const commentRoutes = require('./src/routes/comments');
-const dashboardRoutes = require('./src/routes/dashboard');
+const attachmentRoutes = require('./routes/attachment.js');
+const commentRoutes = require('./routes/comment.js');
+const dashboardRoutes = require('./routes/dashboard.js');
+const notificationRoutes = require('./routes/notification');
+const activityRoutes = require('./routes/activities');
 
 app.use(cors());
 app.use(express.json());
@@ -61,6 +63,8 @@ app.use('/api/users', userRoutes)
 app.use('/api/attachments', attachmentRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/activities', activityRoutes);
 
 
 

@@ -1,6 +1,6 @@
 const express = require('express');
 const { addComment, getTaskComments, deleteComment } = require('../controllers/commentController');
-const { protect } = require('../middleware/auth');
+const { protect } = require('../middlewares/auth');
 
 const router = express.Router();
 router.use(protect);

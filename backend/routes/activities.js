@@ -1,9 +1,9 @@
 const express = require('express');
-const { getDashboardStats } = require('../controllers/dashboardController');
+const { getTaskActivities } = require('../controllers/activityController');
 const { protect } = require('../middlewares/auth');
 
 const router = express.Router();
 router.use(protect);
-router.get('/stats', getDashboardStats);
+router.get('/task/:taskId', getTaskActivities);
 
 module.exports = router;

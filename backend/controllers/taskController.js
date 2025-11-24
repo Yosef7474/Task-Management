@@ -10,6 +10,10 @@ const createTask = async (req, res) => {
       return errorResponse(res, 'Title is required', 400);
     }
 
+    if (req.user.role === 'USER') {
+      return errorResponse(res, 'Access denied. Manager role or Admin role required', 403);
+    }
+
     const task = await prisma.task.create({
       data: {
         title,
@@ -35,14 +39,18 @@ const getTasks = async (req, res) => {
   try {
     const userId = req.user.id;
     const userRole = req.user.role;
+    const isMyTasksRoute = req.path.includes('/my-tasks');
     
     let whereClause = {};
     
-    if (userRole === 'USER') {
+    if (userRole === 'USER' || isMyTasksRoute) {
+      // User can only see assigned tasks
       whereClause = { assignedToId: userId };
     } else if (userRole === 'MANAGER') {
+      // Manager can see tasks they created
       whereClause = { createdById: userId };
     }
+    // Admin can see all tasks (empty where clause)
 
     const tasks = await prisma.task.findMany({
       where: whereClause,
@@ -66,10 +74,11 @@ const getTaskById = async (req, res) => {
     const taskId = parseInt(req.params.id);
     const userId = req.user.id;
     const userRole = req.user.role;
+    const isMyTasksRoute = req.path.includes('/my-tasks');
 
     let whereClause = { id: taskId };
     
-    if (userRole === 'USER') {
+    if (userRole === 'USER' || isMyTasksRoute) {
       whereClause.assignedToId = userId;
     } else if (userRole === 'MANAGER') {
       whereClause.createdById = userId;
@@ -97,7 +106,6 @@ const getTaskById = async (req, res) => {
     errorResponse(res, 'Error fetching task', 500);
   }
 };
-
 const updateTask = async (req, res) => {
   try {
     const taskId = parseInt(req.params.id);
@@ -166,10 +174,49 @@ const deleteTask = async (req, res) => {
   }
 };
 
+
+const searchTasks = async (req, res) => {
+  try {
+    const { q, status, priority, assignedTo } = req.query;
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    let whereClause = {};
+    
+    if (userRole === 'USER') whereClause.assignedToId = userId;
+    else if (userRole === 'MANAGER') whereClause.createdById = userId;
+
+    if (q) {
+      whereClause.OR = [
+        { title: { contains: q, mode: 'insensitive' } },
+        { description: { contains: q, mode: 'insensitive' } }
+      ];
+    }
+    if (status) whereClause.status = status;
+    if (priority) whereClause.priority = priority;
+    if (assignedTo) whereClause.assignedToId = parseInt(assignedTo);
+
+    const tasks = await prisma.task.findMany({
+      where: whereClause,
+      include: {
+        createdBy: { select: { name: true } },
+        assignedTo: { select: { name: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    successResponse(res, 'Search results', { tasks });
+  } catch (error) {
+    errorResponse(res, 'Error searching tasks', 500);
+  }
+};
+
+
 module.exports = {
   createTask,
   getTasks,
   getTaskById,
   updateTask,
   deleteTask,
+  searchTasks
 };

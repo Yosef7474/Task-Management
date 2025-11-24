@@ -78,7 +78,47 @@ const authorize = (...roles) => {
   };
 };
 
+
+// Admin only middleware
+const adminOnly = (req, res, next) => {
+  if (req.user && req.user.role === 'ADMIN') {
+    next();
+  } else {
+    return res.status(403).json({
+      success: false,
+      message: 'Admin access required'
+    });
+  }
+};
+
+// Manager or Admin middleware
+const managerOrAdmin = (req, res, next) => {
+  if (req.user && (req.user.role === 'MANAGER' || req.user.role === 'ADMIN')) {
+    next();
+  } else {
+    return res.status(403).json({
+      success: false,
+      message: 'Manager or Admin access required'
+    });
+  }
+};
+
+// User can access their own data
+const userAccess = (req, res, next) => {
+  if (req.user && req.user.role === 'USER') {
+    next();
+  } else {
+    return res.status(403).json({
+      success: false,
+      message: 'User access required'
+    });
+  }
+};
+
 module.exports = {
   protect,
   authorize,
+  userAccess,
+  adminOnly,
+  managerOrAdmin
 };
