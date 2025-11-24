@@ -4,7 +4,6 @@ import { useGetDashboardStatsQuery } from '../store/api/dashboardApi'
 import AdminDashboard from '../components/dashboard/AdminDashboard'
 import ManagerDashboard from '../components/dashboard/ManagerDashboard'
 import UserDashboard from '../components/dashboard/UserDashboard'
-
 const Dashboard = () => {
   const { user } = useAuth()
   const { data: dashboardData, isLoading } = useGetDashboardStatsQuery()
