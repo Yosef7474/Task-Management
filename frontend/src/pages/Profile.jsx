@@ -315,25 +315,7 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Security Tips */}
-      <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <span className="text-yellow-400 text-lg">🔒</span>
-          </div>
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-yellow-800">Security Tips</h3>
-            <div className="mt-2 text-sm text-yellow-700">
-              <ul className="list-disc list-inside space-y-1">
-                <li>Use a strong, unique password that you don't use elsewhere</li>
-                <li>Never share your password with anyone</li>
-                <li>Log out from shared devices after use</li>
-                <li>Update your password regularly</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </div>
   )
 }

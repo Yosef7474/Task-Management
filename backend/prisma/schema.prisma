@@ -85,6 +85,7 @@ model Attachment {
   filename    String
   fileUrl     String
   fileSize    Int
+  cloudinaryId String?
   uploadedAt  DateTime @default(now())
   
   // Foreign key
