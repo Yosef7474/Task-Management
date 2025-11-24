@@ -1,3 +1,27 @@
-export const API_BASE = '/api';
-export const TOKEN_KEY = 'auth_token';
-export const USER_KEY = 'user';
+export const ROLES = {
+  ADMIN: 'ADMIN',
+  MANAGER: 'MANAGER',
+  USER: 'USER'
+}
+
+export const TASK_STATUS = {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+}
+
+export const PRIORITY = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+}
+
+export const NOTIFICATION_TYPES = {
+  TASK_ASSIGNED: 'TASK_ASSIGNED',
+  TASK_UPDATED: 'TASK_UPDATED',
+  COMMENT_ADDED: 'COMMENT_ADDED',
+  DUE_DATE_REMINDER: 'DUE_DATE_REMINDER',
+  SYSTEM: 'SYSTEM'
+}

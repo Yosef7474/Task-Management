@@ -1,8 +1,34 @@
-import axios from 'axios';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-const API = axios.create({ baseURL: '/api' });
+export const notificationsApi = createApi({
+  reducerPath: 'notificationsApi',
+  baseQuery: fetchBaseQuery({ 
+    baseUrl: 'http://localhost:5000/api/notifications',
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem('token')
+      if (token) {
+        headers.set('authorization', `Bearer ${token}`)
+      }
+      return headers
+    }
+  }),
+  tagTypes: ['Notification'],
+  endpoints: (builder) => ({
+    getNotifications: builder.query({
+      query: () => '/',
+      providesTags: ['Notification']
+    }),
+    markAsRead: builder.mutation({
+      query: () => ({
+        url: '/read',
+        method: 'PATCH'
+      }),
+      invalidatesTags: ['Notification']
+    })
+  }),
+})
 
-export const fetchNotifications = () => API.get('/notifications');
-export const markRead = (id) => API.post(`/notifications/${id}/read`);
-
-export default { fetchNotifications, markRead };
+export const {
+  useGetNotificationsQuery,
+  useMarkAsReadMutation
+} = notificationsApi

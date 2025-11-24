@@ -13,7 +13,10 @@ const dashboardRoutes = require('./routes/dashboard.js');
 const notificationRoutes = require('./routes/notification');
 const activityRoutes = require('./routes/activities');
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

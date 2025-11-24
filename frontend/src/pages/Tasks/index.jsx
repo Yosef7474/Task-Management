@@ -1,12 +1,12 @@
-import React from 'react';
-import TaskList from '../../components/tasks/TaskList';
+import React from 'react'
 
-export default function TasksPage() {
-  const sample = [{ id: 1, title: 'Sample task', description: 'Example' }];
+const Tasks = () => {
   return (
     <div>
-      <h1>Tasks</h1>
-      <TaskList tasks={sample} />
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Tasks</h1>
+      {/* Tasks list will go here */}
     </div>
-  );
+  )
 }
+
+export default Tasks

@@ -1,16 +1,16 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import CommentSection from '../../components/comments/CommentSection';
-import AttachmentList from '../../components/attachments/AttachmentList';
+import React from 'react'
+import { useParams } from 'react-router-dom'
 
-export default function TaskDetails() {
-  const { id } = useParams();
+const TaskDetail = () => {
+  const { id } = useParams()
+  
   return (
     <div>
-      <h1>Task {id}</h1>
-      <p>Details for task {id} (placeholder).</p>
-      <AttachmentList attachments={[]} />
-      <CommentSection comments={[]} />
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Task Details</h1>
+      <p>Task ID: {id}</p>
+      {/* Task details will go here */}
     </div>
-  );
+  )
 }
+
+export default TaskDetail

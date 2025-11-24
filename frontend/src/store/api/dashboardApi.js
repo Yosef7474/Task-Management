@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-export const activitiesApi = createApi({
-  reducerPath: 'activitiesApi',
+export const dashboardApi = createApi({
+  reducerPath: 'dashboardApi',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: 'http://localhost:5000/api/activities',
+    baseUrl: 'http://localhost:5000/api/dashboard',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('token')
       if (token) {
@@ -13,12 +13,12 @@ export const activitiesApi = createApi({
     }
   }),
   endpoints: (builder) => ({
-    getTaskActivities: builder.query({
-      query: (taskId) => `/task/${taskId}`
+    getDashboardStats: builder.query({
+      query: () => '/stats'
     })
   }),
 })
 
 export const {
-  useGetTaskActivitiesQuery
-} = activitiesApi
+  useGetDashboardStatsQuery
+} = dashboardApi

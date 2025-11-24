@@ -1,11 +1,12 @@
-import React from 'react';
-import NotificationBell from '../components/notifications/NotificationBell';
+import React from 'react'
 
-export default function Notifications() {
+const Notifications = () => {
   return (
     <div>
-      <h1>Notifications</h1>
-      <NotificationBell count={3} />
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Notifications</h1>
+      {/* Notifications list will go here */}
     </div>
-  );
+  )
 }
+
+export default Notifications

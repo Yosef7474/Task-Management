@@ -1,10 +1,12 @@
-import React from 'react';
+import React from 'react'
 
-export default function UsersPage() {
+const Users = () => {
   return (
     <div>
-      <h1>Users</h1>
-      <p>Placeholder users list.</p>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Users</h1>
+      {/* Users management will go here */}
     </div>
-  );
+  )
 }
+
+export default Users

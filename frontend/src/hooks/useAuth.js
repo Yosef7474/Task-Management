@@ -1,23 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
+import { useGetMeQuery } from '../store/api/authApi'
 
-export default function useAuth() {
-  const [user, setUser] = useState(null);
+export const useAuth = () => {
+  const token = localStorage.getItem('token')
+  const { data: response, isLoading, error } = useGetMeQuery(undefined, {
+    skip: !token // Skip the query if no token exists
+  })
+  
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
-    // placeholder: load user from localStorage or call auth API
-    const raw = localStorage.getItem('user');
-    if (raw) setUser(JSON.parse(raw));
-  }, []);
+    if (response?.success && response.data?.user) {
+      setUser(response.data.user)
+      setIsAuthenticated(true)
+    } else if (error || !token) {
+      setUser(null)
+      setIsAuthenticated(false)
+    }
+  }, [response, error, token])
 
-  const login = (u) => {
-    setUser(u);
-    localStorage.setItem('user', JSON.stringify(u));
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-  };
-
-  return { user, login, logout };
+  return {
+    user: response?.success ? response.data?.user : null,
+    isLoading: token ? isLoading : false,
+    error,
+    isAuthenticated
+  }
 }
