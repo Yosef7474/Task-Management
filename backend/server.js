@@ -7,6 +7,9 @@ const prisma = require('./prismaClient.js');
 const authRoutes = require('./routes/auth.js')
 const taskRoutes = require('./routes/task.js');
 const userRoutes = require('./routes/user.js');
+const attachmentRoutes = require('./src/routes/attachments');
+const commentRoutes = require('./src/routes/comments');
+const dashboardRoutes = require('./src/routes/dashboard');
 
 app.use(cors());
 app.use(express.json());
@@ -55,6 +58,9 @@ app.get("/api/test-tables", async (req, res) => {
 app.use('/api/auth', authRoutes)
 app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes)
+app.use('/api/attachments', attachmentRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 
 
