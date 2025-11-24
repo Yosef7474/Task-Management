@@ -5,10 +5,10 @@ const getDashboardStats = async (req, res) => {
   try {
     const userId = req.user.id;
     const userRole = req.user.role;
-    
+
     let taskWhere = {};
-    if (userRole === 'USER') taskWhere.assignedToId = userId;
-    else if (userRole === 'MANAGER') taskWhere.createdById = userId;
+    if (userRole === 'USER') taskWhere = { assignees: { some: { userId } } };
+    else if (userRole === 'MANAGER') taskWhere = { createdById: userId };
 
     const [
       totalTasks,
@@ -19,9 +19,9 @@ const getDashboardStats = async (req, res) => {
     ] = await Promise.all([
       prisma.task.count({ where: taskWhere }),
       prisma.task.count({ where: { ...taskWhere, status: 'COMPLETED' } }),
-      prisma.task.count({ 
-        where: { 
-          ...taskWhere, 
+      prisma.task.count({
+        where: {
+          ...taskWhere,
           dueDate: { lt: new Date() },
           status: { not: 'COMPLETED' }
         }
@@ -30,7 +30,9 @@ const getDashboardStats = async (req, res) => {
         where: taskWhere,
         include: {
           createdBy: { select: { name: true } },
-          assignedTo: { select: { name: true } }
+          assignees: {
+            include: { user: { select: { name: true } } }
+          }
         },
         orderBy: { createdAt: 'desc' },
         take: 5
@@ -49,6 +51,7 @@ const getDashboardStats = async (req, res) => {
       recentTasks
     });
   } catch (error) {
+    console.error('getDashboardStats error:', error);
     errorResponse(res, 'Error fetching dashboard', 500);
   }
 };

@@ -79,8 +79,10 @@ const AdminDashboard = ({ data }) => {
                 <div>
                   <h4 className="font-medium text-gray-800">{task.title}</h4>
                   <p className="text-sm text-gray-600">
-                    Created by: {task.createdBy.name} | 
-                    Assigned to: {task.assignedTo?.name || 'Unassigned'}
+                    Created by: {task.createdBy.name} | Assigned to:{' '}
+                    {task.assignees?.length
+                      ? task.assignees.map((assignment) => assignment.user.name).join(', ')
+                      : 'Unassigned'}
                   </p>
                 </div>
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${

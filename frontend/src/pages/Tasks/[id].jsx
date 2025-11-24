@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useAuth } from '../../context/authContext'
-import { useGetTaskByIdQuery, useGetMyTaskByIdQuery, useUpdateTaskMutation } from '../../store/api/tasksApi'
-import { useGetTaskCommentsQuery, useAddCommentMutation } from '../../store/api/commentsApi'
+import { useGetTaskByIdQuery, useGetMyTaskByIdQuery } from '../../store/api/tasksApi'
+import { useGetTaskCommentsQuery } from '../../store/api/commentsApi'
 import { useGetTaskAttachmentsQuery } from '../../store/api/attachmentsApi'
+import { useGetTeamMembersQuery } from '../../store/api/usersApi'
 import TaskForm from '../../components/tasks/TaskForm'
 import CommentSection from '../../components/comments/CommentSection'
 import AttachmentList from '../../components/attachments/AttachmentList'
-import ActivityLog from '../../components/activities/ActivityLog'
+import ActivityLog from '../../pages/ActivityLog'
 
 const TaskDetail = () => {
   const { id } = useParams()
@@ -22,13 +23,16 @@ const TaskDetail = () => {
 
   const { data: commentsData, refetch: refetchComments } = useGetTaskCommentsQuery(id)
   const { data: attachmentsData, refetch: refetchAttachments } = useGetTaskAttachmentsQuery(id)
-  const [updateTask] = useUpdateTaskMutation()
+  const { data: teamMembersData } = useGetTeamMembersQuery(undefined, {
+    skip: user.role === 'USER'
+  })
 
   const task = taskData?.data?.task
   const comments = commentsData?.data?.comments || []
   const attachments = attachmentsData?.data?.attachments || []
 
-  const canEdit = user.role !== 'USER' || task?.assignedToId === user.id
+  const isUserAssignee = task?.assignees?.some((assignment) => assignment.userId === user.id)
+  const canEdit = user.role !== 'USER' || isUserAssignee
 
   if (isLoading) {
     return (
@@ -106,7 +110,11 @@ const TaskDetail = () => {
 
               <div className="flex justify-between">
                 <span className="font-medium">Assigned to:</span>
-                <span>{task.assignedTo?.name || 'Unassigned'}</span>
+                <span className="text-right">
+                  {task.assignees?.length
+                    ? task.assignees.map((assignment) => assignment.user.name).join(', ')
+                    : 'Unassigned'}
+                </span>
               </div>
 
               {task.dueDate && (
@@ -217,6 +225,7 @@ const TaskDetail = () => {
               task={task}
               onSuccess={handleEditSuccess}
               onCancel={() => setShowEditForm(false)}
+              teamMembers={teamMembersData?.data?.users || []}
             />
           </div>
         </div>

@@ -1,6 +1,7 @@
 const prisma = require('../utils/database');
 const { successResponse, errorResponse } = require('../utils/responseHelper');
 const { createNotification } = require('./notificationController');
+const { logActivity } = require('./activityController');
 
 const addComment = async (req, res) => {
   try {
@@ -14,7 +15,7 @@ const addComment = async (req, res) => {
         id: true,
         title: true,
         createdById: true,
-        assignedToId: true
+        assignees: { select: { userId: true } }
       }
     });
 
@@ -28,30 +29,40 @@ const addComment = async (req, res) => {
     });
 
     const recipients = new Set();
-    if (task.assignedToId && task.assignedToId !== userId) {
-      recipients.add(task.assignedToId);
-    }
-    if (task.createdById && task.createdById !== userId) {
+    task.assignees.forEach(({ userId: assigneeId }) => {
+      if (assigneeId !== userId) recipients.add(assigneeId);
+    });
+    if (task.createdById !== userId) {
       recipients.add(task.createdById);
     }
 
-    await Promise.all(
-      Array.from(recipients).map((recipientId) =>
-        createNotification(
-          recipientId,
-          `New comment on "${task.title}"`,
-          'COMMENT_ADDED',
-          {
-            taskId: task.id,
-            commentId: comment.id,
-            taskTitle: task.title
-          }
+    if (recipients.size) {
+      await Promise.all(
+        Array.from(recipients).map((recipientId) =>
+          createNotification(
+            recipientId,
+            `New comment on "${task.title}"`,
+            'COMMENT_ADDED',
+            {
+              taskId: task.id,
+              commentId: comment.id,
+              taskTitle: task.title
+            }
+          )
         )
-      )
+      );
+    }
+
+    await logActivity(
+      userId,
+      'COMMENT_ADDED',
+      `Added comment: ${content.substring(0, 50)}${content.length > 50 ? '...' : ''}`,
+      taskId
     );
 
     successResponse(res, 'Comment added', { comment }, 201);
   } catch (error) {
+    console.error('addComment error:', error);
     errorResponse(res, 'Error adding comment', 500);
   }
 };
@@ -73,7 +84,18 @@ const getTaskComments = async (req, res) => {
 const deleteComment = async (req, res) => {
   try {
     const commentId = parseInt(req.params.id);
+    
+    // Get comment details before deletion for logging
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      include: { task: true }
+    });
+
     await prisma.comment.delete({ where: { id: commentId } });
+
+    // Log activity
+    await logActivity(req.user.id, 'COMMENT_DELETED', `Deleted comment from task: ${comment.task.title}`, comment.taskId);
+
     successResponse(res, 'Comment deleted');
   } catch (error) {
     errorResponse(res, 'Error deleting comment', 500);

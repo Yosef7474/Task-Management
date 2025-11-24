@@ -13,7 +13,7 @@ const TaskForm = ({ task, onSuccess, onCancel, teamMembers = [] }) => {
     priority: task?.priority || 'MEDIUM',
     status: task?.status || 'PENDING',
     dueDate: task?.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
-    assignedToId: task?.assignedToId || ''
+    assignedToIds: task?.assignees?.map((assignee) => assignee.userId.toString()) || []
   })
 
   const isLoading = creating || updating
@@ -26,37 +26,36 @@ const TaskForm = ({ task, onSuccess, onCancel, teamMembers = [] }) => {
     }))
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    if (!formData.title.trim()) {
-      alert('Title is required')
-      return
-    }
-
-    try {
-      if (task) {
-        // Update existing task
-        await updateTask({
-          id: task.id,
-          ...formData,
-          assignedToId: formData.assignedToId ? parseInt(formData.assignedToId) : null
-        }).unwrap()
-      } else {
-        // Create new task
-        await createTask({
-          ...formData,
-          assignedToId: formData.assignedToId ? parseInt(formData.assignedToId) : null
-        }).unwrap()
-      }
-      
-      onSuccess()
-    } catch (error) {
-      console.error('Task operation failed:', error)
-      alert(error.data?.message || 'Operation failed')
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault()
+  
+  if (!formData.title.trim()) {
+    alert('Title is required')
+    return
   }
 
+  const assignedToIdsPayload = formData.assignedToIds.map((id) => parseInt(id)).filter(Boolean)
+
+  try {
+    if (task) {
+      await updateTask({
+        id: task.id,
+        ...formData,
+        assignedToIds: assignedToIdsPayload
+      }).unwrap()
+    } else {
+      await createTask({
+        ...formData,
+        assignedToIds: assignedToIdsPayload
+      }).unwrap()
+    }
+    
+    onSuccess()
+  } catch (error) {
+    console.error('Task operation failed:', error)
+    alert(error.data?.message || 'Operation failed')
+  }
+}
   // Safe team members filtering
   const availableTeamMembers = Array.isArray(teamMembers) 
     ? teamMembers.filter(member => member.role === 'USER')
@@ -157,21 +156,30 @@ const TaskForm = ({ task, onSuccess, onCancel, teamMembers = [] }) => {
           {(user.role === 'ADMIN' || user.role === 'MANAGER') && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Assign To
+                Assign To (select one or more)
               </label>
               <select
-                name="assignedToId"
-                value={formData.assignedToId}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                multiple
+                name="assignedToIds"
+                value={formData.assignedToIds}
+                onChange={(e) => {
+                  const values = Array.from(e.target.selectedOptions).map((option) => option.value)
+                  setFormData(prev => ({
+                    ...prev,
+                    assignedToIds: values
+                  }))
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[120px]"
               >
-                <option value="">Unassigned</option>
                 {availableTeamMembers.map(member => (
                   <option key={member.id} value={member.id}>
                     {member.name} ({member.email})
                   </option>
                 ))}
               </select>
+              <p className="text-xs text-gray-500 mt-1">
+                Hold Ctrl/Cmd to select multiple team members.
+              </p>
             </div>
           )}
         </div>

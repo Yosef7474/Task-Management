@@ -28,6 +28,8 @@ const TaskCard = ({ task, onDelete, canEdit, canDelete, userRole, teamMembers })
     setShowEditForm(false)
   }
 
+  const assignedUsers = task.assignees?.map((assignment) => assignment.user) || []
+
   return (
     <>
       <div className="bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow">
@@ -63,12 +65,14 @@ const TaskCard = ({ task, onDelete, canEdit, canDelete, userRole, teamMembers })
               <span className="font-medium">{task.createdBy.name}</span>
             </div>
 
-            {task.assignedTo && (
-              <div className="flex justify-between">
-                <span>Assigned to:</span>
-                <span className="font-medium">{task.assignedTo.name}</span>
-              </div>
-            )}
+            <div className="flex justify-between">
+              <span>Assigned to:</span>
+              <span className="font-medium text-right">
+                {assignedUsers.length
+                  ? assignedUsers.map((user) => user.name).join(', ')
+                  : 'Unassigned'}
+              </span>
+            </div>
 
             {task.dueDate && (
               <div className="flex justify-between">

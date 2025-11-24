@@ -9,6 +9,7 @@ const Sidebar = () => {
   const menuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
     { path: '/tasks', label: user?.role === 'USER' ? 'My Tasks' : 'Tasks', icon: '✅' },
+    { path: '/activity-log', label: 'Activity Log', icon: '📋' },
     ...(user?.role === 'ADMIN' || user?.role === 'MANAGER' 
       ? [{ path: '/users', label: user?.role === 'ADMIN' ? 'All Users' : 'Team Members', icon: '👥' }] 
       : []),

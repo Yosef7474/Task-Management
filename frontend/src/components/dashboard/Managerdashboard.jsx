@@ -78,8 +78,12 @@ const ManagerDashboard = ({ data }) => {
                 <div>
                   <h4 className="font-medium text-gray-800">{task.title}</h4>
                   <p className="text-sm text-gray-600">
-                    Assigned to: {task.assignedTo?.name || 'Unassigned'} | 
-                    Priority: <span className={`font-medium ${
+                    Assigned to:{' '}
+                    {task.assignees?.length
+                      ? task.assignees.map((assignment) => assignment.user.name).join(', ')
+                      : 'Unassigned'}{' '}
+                    | Priority:{' '}
+                    <span className={`font-medium ${
                       task.priority === 'HIGH' ? 'text-red-600' :
                       task.priority === 'MEDIUM' ? 'text-yellow-600' : 'text-green-600'
                     }`}>{task.priority}</span>

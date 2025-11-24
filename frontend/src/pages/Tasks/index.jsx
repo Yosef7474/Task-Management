@@ -68,7 +68,12 @@ const Tasks = () => {
     
     if (filters.status && task.status !== filters.status) return false
     if (filters.priority && task.priority !== filters.priority) return false
-    if (filters.assignedTo && task.assignedToId !== parseInt(filters.assignedTo)) return false
+    if (
+      filters.assignedTo &&
+      !task.assignees?.some((assignment) => assignment.userId === parseInt(filters.assignedTo))
+    ) {
+      return false
+    }
     
     return true
   })
@@ -128,16 +133,19 @@ const Tasks = () => {
         </div>
       ) : filteredTasks && filteredTasks.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTasks.map((task) => (
+          {filteredTasks.map((task) => {
+            const isUserAssignee = task.assignees?.some((assignment) => assignment.userId === user.id)
+            return (
             <TaskCard
               key={task.id}
               task={task}
               onDelete={handleDeleteTask}
-              canEdit={user.role !== 'USER' || task.assignedToId === user.id}
+              canEdit={user.role !== 'USER' || isUserAssignee}
               canDelete={user.role !== 'USER' && task.createdById === user.id}
               userRole={user.role}
+              teamMembers={teamMembersData?.data?.users || []}
             />
-          ))}
+          )})}
         </div>
       ) : (
         <div className="text-center py-12 bg-white rounded-lg border-2 border-dashed border-gray-300">
