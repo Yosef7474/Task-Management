@@ -87,6 +87,7 @@ model Notification {
   id        Int       @id @default(autoincrement())
   message   String
   type      NotificationType
+  context   Json?
   isRead    Boolean   @default(false)
   createdAt DateTime  @default(now())
   

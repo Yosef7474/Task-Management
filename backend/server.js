@@ -1,9 +1,11 @@
 require('dotenv').config();
+const http = require('http');
 const express = require('express');
-const app = express();
-const port = 3000;
 const cors = require('cors');
 const prisma = require('./prismaClient.js');
+const { setupSocket } = require('./utils/socket');
+const app = express();
+const port = process.env.PORT || 3000;
 const authRoutes = require('./routes/auth.js')
 const taskRoutes = require('./routes/task.js');
 const userRoutes = require('./routes/user.js');
@@ -71,6 +73,9 @@ app.use('/api/activities', activityRoutes);
 
 
 
-app.listen(port, () => {
+const server = http.createServer(app);
+setupSocket(server);
+
+server.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });

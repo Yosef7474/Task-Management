@@ -1,5 +1,6 @@
 const prisma = require('../utils/database');
 const { successResponse, errorResponse } = require('../utils/responseHelper');
+const { createNotification } = require('./notificationController');
 
 const createTask = async (req, res) => {
   try {
@@ -28,6 +29,15 @@ const createTask = async (req, res) => {
         assignedTo: { select: { id: true, name: true, email: true } },
       }
     });
+
+    if (task.assignedToId) {
+      await createNotification(
+        task.assignedToId,
+        `You have been assigned to task "${task.title}"`,
+        'TASK_ASSIGNED',
+        { taskId: task.id }
+      );
+    }
 
     successResponse(res, 'Task created successfully', { task }, 201);
   } catch (error) {
@@ -141,6 +151,28 @@ const updateTask = async (req, res) => {
         assignedTo: { select: { id: true, name: true, email: true } },
       }
     });
+
+    if (
+      updatedTask.assignedToId &&
+      updatedTask.assignedToId !== task.assignedToId
+    ) {
+      await createNotification(
+        updatedTask.assignedToId,
+        `You have been assigned to task "${updatedTask.title}"`,
+        'TASK_ASSIGNED',
+        { taskId: updatedTask.id }
+      );
+    } else if (
+      updatedTask.assignedToId &&
+      updatedTask.assignedToId !== req.user.id
+    ) {
+      await createNotification(
+        updatedTask.assignedToId,
+        `Task "${updatedTask.title}" has been updated`,
+        'TASK_UPDATED',
+        { taskId: updatedTask.id }
+      );
+    }
 
     successResponse(res, 'Task updated successfully', { task: updatedTask });
   } catch (error) {

@@ -1,10 +1,19 @@
 const prisma = require('../utils/database');
 const { successResponse, errorResponse } = require('../utils/responseHelper');
+const { emitToUser } = require('../utils/socket');
 
-const createNotification = async (userId, message, type = 'SYSTEM') => {
-  await prisma.notification.create({
-    data: { userId, message, type }
+const createNotification = async (userId, message, type = 'SYSTEM', context = null) => {
+  const notification = await prisma.notification.create({
+    data: {
+      userId,
+      message,
+      type,
+      ...(context && { context })
+    }
   });
+
+  emitToUser(userId, 'notification:new', notification);
+  return notification;
 };
 
 const getUserNotifications = async (req, res) => {
