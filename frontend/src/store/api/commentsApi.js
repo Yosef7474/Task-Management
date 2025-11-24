@@ -1,9 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import baseUrl  from '../../utils/baseUrl'
 
 export const commentsApi = createApi({
   reducerPath: 'commentsApi',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: 'http://localhost:3000/api/comments',
+    baseUrl: 'https://task-management-wsuy.onrender.com/api/comments',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('token')
       if (token) {

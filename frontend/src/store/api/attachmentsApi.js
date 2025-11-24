@@ -1,9 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import  baseUrl from '../../utils/baseUrl'
 
 export const attachmentsApi = createApi({
   reducerPath: 'attachmentsApi',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: 'http://localhost:3000/api/attachments',
+    baseUrl: 'https://task-management-wsuy.onrender.com/api/attachments',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('token')
       if (token) {

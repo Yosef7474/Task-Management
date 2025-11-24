@@ -1,10 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { getSocket } from '../../utils/socket'
+import baseUrl  from '../../utils/baseUrl'
 
 export const notificationsApi = createApi({
   reducerPath: 'notificationsApi',
   baseQuery: fetchBaseQuery({ 
-  baseUrl: 'http://localhost:3000/api/notifications',
+  baseUrl: 'https://task-management-wsuy.onrender.com/api/notifications',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('token')
       if (token) {

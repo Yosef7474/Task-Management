@@ -16,7 +16,7 @@ const notificationRoutes = require('./routes/notification');
 const activityRoutes = require('./routes/activities');
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5174', 'https://task-management-wsuy.onrender.com'],
   credentials: true
 }));
 app.use(express.json());
