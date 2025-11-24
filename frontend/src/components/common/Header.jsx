@@ -1,11 +1,15 @@
 import React from 'react'
 import { useAuth } from '../../context/authContext'
+import { useNavigate } from 'react-router-dom'
 
 const Header = () => {
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
 
   const handleLogout = () => {
     logout()
+    navigate('/login')
+    window.location.reload()
   }
 
   return (

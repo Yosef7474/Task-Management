@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../../../src/hooks/useAuth'
+import { useAuth } from '../../context/authContext'
 
 const Sidebar = () => {
   const location = useLocation()
@@ -8,9 +8,9 @@ const Sidebar = () => {
 
   const menuItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/tasks', label: 'Tasks', icon: '✅' },
+    { path: '/tasks', label: user?.role === 'USER' ? 'My Tasks' : 'Tasks', icon: '✅' },
     ...(user?.role === 'ADMIN' || user?.role === 'MANAGER' 
-      ? [{ path: '/users', label: 'Users', icon: '👥' }] 
+      ? [{ path: '/users', label: user?.role === 'ADMIN' ? 'All Users' : 'Team Members', icon: '👥' }] 
       : []),
     { path: '/profile', label: 'Profile', icon: '👤' },
     { path: '/notifications', label: 'Notifications', icon: '🔔' },
@@ -20,7 +20,21 @@ const Sidebar = () => {
 
   return (
     <div className="w-64 bg-white shadow-lg">
-      <nav className="mt-8">
+      <div className="p-4 border-b">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+            <span className="text-white font-medium">
+              {user?.name?.charAt(0).toUpperCase()}
+            </span>
+          </div>
+          <div>
+            <p className="font-medium text-gray-800">{user?.name}</p>
+            <p className="text-sm text-gray-600 capitalize">{user?.role?.toLowerCase()}</p>
+          </div>
+        </div>
+      </div>
+      
+      <nav className="mt-4">
         <ul className="space-y-2 px-4">
           {menuItems.map((item) => (
             <li key={item.path}>
