@@ -14,7 +14,7 @@ const router = express.Router();
 router.use(protect);
 
 // User-specific routes
-router.get('/my-tasks', userAccess, getTasks);
+router.get('/my-tasks', getTasks);
 router.get('/my-tasks/:id', userAccess, getTaskById);
 router.put('/my-tasks/:id', userAccess, updateTask);
 // router.patch('/my-tasks/:id/status', userAccess, updateTaskStatus);

@@ -8,11 +8,13 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Tasks from './pages/Tasks'
+import Index from './pages/Tasks/index'
 import TaskDetail from './pages/Tasks/[id]'
 import Users from './pages/Users'
 import Profile from './pages/Profile'
 import Notifications from './pages/Notifications'
 import { useAuth } from './context/authContext'
+import ActivityLog from './components/activities/ActivityLog'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -76,9 +78,10 @@ function AppRoutes() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="profile" element={<Profile />} />
         <Route path="notifications" element={<Notifications />} />
+        <Route path="activity" element={<ActivityLog/>}/>
         
         {/* Tasks Routes */}
-        <Route path="tasks" element={<Tasks />} />
+        <Route path="tasks" element={<Index/>} />
         <Route path="tasks/:id" element={<TaskDetail />} />
         
         {/* Admin/Manager Routes */}

@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 export const commentsApi = createApi({
   reducerPath: 'commentsApi',
   baseQuery: fetchBaseQuery({ 
-    baseUrl: 'http://localhost:5000/api/comments',
+    baseUrl: 'http://localhost:3000/api/comments',
     prepareHeaders: (headers) => {
       const token = localStorage.getItem('token')
       if (token) {
