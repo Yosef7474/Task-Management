@@ -16,7 +16,7 @@ const notificationRoutes = require('./routes/notification');
 const activityRoutes = require('./routes/activities');
 
 app.use(cors({
-  origin: ['http://localhost:5174', 'https://task-management-tzcn.vercel.app/'],
+  origin: ['http://localhost:5174', 'https://task-management-tzcn.vercel.app'],
   credentials: true
 }));
 app.use(express.json());

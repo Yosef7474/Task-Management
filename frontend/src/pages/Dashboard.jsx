@@ -2,7 +2,7 @@ import React from 'react'
 import { useAuth } from '../context/authContext'
 import { useGetDashboardStatsQuery } from '../store/api/dashboardApi'
 import AdminDashboard from '../components/dashboard/AdminDashboard'
-import ManagerDashboard from '../components/dashboard/ManagerDashboard'
+import ManagerDashboard from '../components/dashboard/Managerdashboard'
 import UserDashboard from '../components/dashboard/UserDashboard'
 const Dashboard = () => {
   const { user } = useAuth()
