@@ -32,14 +32,14 @@ const TaskCard = ({ task, onDelete, canEdit, canDelete, userRole, teamMembers })
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
         <div className="p-4">
           {/* Header */}
           <div className="flex justify-between items-start mb-3">
             <h3 className="font-semibold text-gray-800 text-lg line-clamp-2">
               {task.title}
             </h3>
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}`}>
+            <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(task.priority)}`}>
               {task.priority}
             </span>
           </div>
@@ -102,16 +102,17 @@ const TaskCard = ({ task, onDelete, canEdit, canDelete, userRole, teamMembers })
           <div className="flex justify-between items-center mt-4 pt-3 border-t border-gray-200">
             <Link
               to={`/tasks/${task.id}`}
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
             >
               View Details
             </Link>
             
             <div className="flex space-x-2">
-              {canEdit && (
+              {/* Only show Edit button for ADMIN and MANAGER roles */}
+              {canEdit && (userRole === 'ADMIN' || userRole === 'MANAGER') && (
                 <button
                   onClick={() => setShowEditForm(true)}
-                  className="text-green-600 hover:text-green-800 text-sm"
+                  className="text-green-600 hover:text-green-800 text-sm transition-colors"
                 >
                   Edit
                 </button>
@@ -120,7 +121,7 @@ const TaskCard = ({ task, onDelete, canEdit, canDelete, userRole, teamMembers })
               {canDelete && (
                 <button
                   onClick={() => onDelete(task.id)}
-                  className="text-red-600 hover:text-red-800 text-sm"
+                  className="text-red-600 hover:text-red-800 text-sm transition-colors"
                 >
                   Delete
                 </button>
@@ -130,16 +131,18 @@ const TaskCard = ({ task, onDelete, canEdit, canDelete, userRole, teamMembers })
         </div>
       </div>
 
-      {/* Edit Form Modal */}
-      {showEditForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <TaskForm
-              task={task}
-              onSuccess={handleEditSuccess}
-              onCancel={() => setShowEditForm(false)}
-              teamMembers={teamMembers}
-            />
+      {/* Edit Form Modal - Only show for ADMIN and MANAGER roles */}
+      {showEditForm && (userRole === 'ADMIN' || userRole === 'MANAGER') && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-1">
+              <TaskForm
+                task={task}
+                onSuccess={handleEditSuccess}
+                onCancel={() => setShowEditForm(false)}
+                teamMembers={teamMembers}
+              />
+            </div>
           </div>
         </div>
       )}

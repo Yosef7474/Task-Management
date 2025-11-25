@@ -92,7 +92,7 @@ const AttachmentList = ({ taskId, attachments, onAttachmentChange }) => {
               
               <div className="flex items-center space-x-2">
                 <a
-                  href={`http://localhost:5000${attachment.fileUrl}`}
+                  href={`${attachment.fileUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-800 text-sm"
