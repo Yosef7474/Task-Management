@@ -33,7 +33,6 @@ const PublicRoute = ({ children }) => {
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>
   }
-  
   return !isAuthenticated ? children : <Navigate to="/dashboard" />
 }
 
